@@ -9,13 +9,13 @@ import java.util.Random;
 public class Game extends JFrame {
     private final String[][] win = {{"1", "2", "3", "4"}, {"5", "6", "7", "8"},
             {"9", "10", "11", "12"}, {"13", "14", "15", ""}};
-    private String[][] gameBoard = win;
+    private String[][] gameBoard;
 
     JPanel brd;
 
     public Game() {
-        super("fifteen");
-        newGame();
+        super("Fifteen");
+        mixed();
 
         setBounds(1000, 500, 400, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -23,42 +23,57 @@ public class Game extends JFrame {
         JPanel controlPanel = new JPanel(new FlowLayout());
         JButton newGame = new JButton("Новая игра");
         newGame.setFont(newGame.getFont().deriveFont(20.f));
-        newGame.addActionListener(e -> refresh());
+        newGame.addActionListener(e -> newGame());
         controlPanel.add(newGame);
 
         add(controlPanel, BorderLayout.NORTH);
 
+        makeBoard();
+    }
+
+    private void moveBone(int x, int y) {
+        gameBoard[x][y] = "тык";
+        remove(brd);
+        makeBoard();
+        brd.updateUI();
+        return;
+    }
+
+    private void makeBoard() {
         brd = new JPanel(new GridLayout(4, 4));
-        brd.add(createBone(gameBoard[0][0]));
-        brd.add(createBone(gameBoard[0][1]));
-        brd.add(createBone(gameBoard[0][2]));
-        brd.add(createBone(gameBoard[0][3]));
+        brd.add(createBone(gameBoard[0][0], e -> moveBone(0,0)));
+        brd.add(createBone(gameBoard[0][1], e -> moveBone(0,1)));
+        brd.add(createBone(gameBoard[0][2], e -> moveBone(0,2)));
+        brd.add(createBone(gameBoard[0][3], e -> moveBone(0,3)));
 
-        brd.add(createBone(gameBoard[1][0]));
-        brd.add(createBone(gameBoard[1][1]));
-        brd.add(createBone(gameBoard[1][2]));
-        brd.add(createBone(gameBoard[1][3]));
+        brd.add(createBone(gameBoard[1][0], e -> moveBone(1,0)));
+        brd.add(createBone(gameBoard[1][1], e -> moveBone(1,1)));
+        brd.add(createBone(gameBoard[1][2], e -> moveBone(1,2)));
+        brd.add(createBone(gameBoard[1][3], e -> moveBone(1,3)));
 
-        brd.add(createBone(gameBoard[2][0]));
-        brd.add(createBone(gameBoard[2][1]));
-        brd.add(createBone(gameBoard[2][2]));
-        brd.add(createBone(gameBoard[2][3]));
+        brd.add(createBone(gameBoard[2][0], e -> moveBone(2,0)));
+        brd.add(createBone(gameBoard[2][1], e -> moveBone(2,1)));
+        brd.add(createBone(gameBoard[2][2], e -> moveBone(2,2)));
+        brd.add(createBone(gameBoard[2][3], e -> moveBone(2,3)));
 
-        brd.add(createBone(gameBoard[3][0]));
-        brd.add(createBone(gameBoard[3][1]));
-        brd.add(createBone(gameBoard[3][2]));
-        brd.add(createBone(gameBoard[3][3]));
+        brd.add(createBone(gameBoard[3][0], e -> moveBone(3,0)));
+        brd.add(createBone(gameBoard[3][1], e -> moveBone(3,1)));
+        brd.add(createBone(gameBoard[3][2], e -> moveBone(3,2)));
+        brd.add(createBone(gameBoard[3][3], e -> moveBone(3,3)));
 
         add(brd, BorderLayout.CENTER);
     }
 
-    private JButton createBone(String text) {
+    private JButton createBone(String text, ActionListener l) {
         JButton btn = new JButton(text);
         btn.setFont(btn.getFont().deriveFont(36.f));
+        btn.addActionListener(l);
         return btn;
     }
 
-    private void newGame() {
+    private void mixed() {
+        gameBoard = new String[][]{{"1", "2", "3", "4"}, {"5", "6", "7", "8"},
+                {"9", "10", "11", "12"}, {"13", "14", "15", ""}};
         Random rnd = new Random();
         for(int i = 0; i < gameBoard.length; i++) {
             for (int j = 0; j < gameBoard.length; j++) {
@@ -71,31 +86,16 @@ public class Game extends JFrame {
         }
     }
 
-    private void refresh() {
-        newGame();
-        brd = new JPanel(new GridLayout(4, 4));
-        brd.add(createBone(gameBoard[0][0]));
-        brd.add(createBone(gameBoard[0][1]));
-        brd.add(createBone(gameBoard[0][2]));
-        brd.add(createBone(gameBoard[0][3]));
-
-        brd.add(createBone(gameBoard[1][0]));
-        brd.add(createBone(gameBoard[1][1]));
-        brd.add(createBone(gameBoard[1][2]));
-        brd.add(createBone(gameBoard[1][3]));
-
-        brd.add(createBone(gameBoard[2][0]));
-        brd.add(createBone(gameBoard[2][1]));
-        brd.add(createBone(gameBoard[2][2]));
-        brd.add(createBone(gameBoard[2][3]));
-
-        brd.add(createBone(gameBoard[3][0]));
-        brd.add(createBone(gameBoard[3][1]));
-        brd.add(createBone(gameBoard[3][2]));
-        brd.add(createBone(gameBoard[3][3]));
-
-        add(brd, BorderLayout.CENTER);
-        brd.updateUI();
+    private void newGame() {
+        int result = JOptionPane.showConfirmDialog(this,"Начать новую игру?",
+                "Новая игра",
+                JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            remove(brd);
+            mixed();
+            makeBoard();
+            brd.updateUI();
+        }
     }
 
 
@@ -103,3 +103,15 @@ public class Game extends JFrame {
         new Game().setVisible(true);
     }
 }
+/*
+Напишите программу, реализующую игру «15»
+Интерфейс приложения должен:
+• показывать текущее расположение костяшек;
+• позволять пользователю перемещать костяшки в свободную ячейку;
+• в случае выигрыша показывать пользователю соответствующее сообщение;
+• позволять пользователю сбрасывать расположение костяшек, расставляя их случайным
+образом; сброс должен выполняться после дополнительного подтверждения.
+Особенность игры «15» состоит в том, что не все возможные начальные положения костяшек
+приводимы к выигрышу, когда костяшки расставлены по рядам в порядке от «1» до «15», а правая нижняя ячейка свободна. Исходя из этого допустим варианты реализации игры, при котором
+выигрышем считается расстановка, когда костяшки от «1» до «13» стоят на своих местах, костяшки «14» и «15» идут в любом порядке, а правая нижняя ячейка игрового поля свободна.
+*/
