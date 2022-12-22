@@ -3,6 +3,7 @@ package ru.avalon.javapp.devj110.fifteen;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -32,11 +33,66 @@ public class Game extends JFrame {
     }
 
     private void moveBone(int x, int y) {
-        gameBoard[x][y] = "тык";
+        int line = checkLine(x);
+        int column = checkColumn(y);
+        if (column != -1) {
+            moveToColumn(x,column,y);
+        }
+        if (line != -1) {
+            moveToLine(x,line,y);
+        }
         remove(brd);
         makeBoard();
         brd.updateUI();
-        return;
+        checkWin();
+    }
+
+    private void checkWin() {
+        if (Arrays.equals(win, gameBoard))
+            gameBoard[3][3] = "w";
+        remove(brd);
+        makeBoard();
+        brd.updateUI();
+    }
+
+    private void moveToLine(int x, int line, int y) {
+        if (y < line) {
+            for (int i = line; i > y; --i)
+                gameBoard[x][i] = gameBoard[x][i-1];
+            gameBoard[x][y] = "";
+        } else if (line != y) {
+            for (int i = line; i < y; ++i)
+                gameBoard[x][i] = gameBoard[x][i+1];
+            gameBoard[x][y] = "";
+        }
+    }
+
+    private void moveToColumn(int x, int column, int y) {
+        if (x < column) {
+            for (int i = column; i > x; --i)
+                gameBoard[i][y] = gameBoard[i-1][y];
+            gameBoard[x][y] = "";
+        } else if (column != x) {
+            for (int i = column; i < x; ++i)
+                gameBoard[i][y] = gameBoard[i+1][y];
+            gameBoard[x][y] = "";
+        }
+    }
+
+    private int checkLine(int x) {
+        for (int i = 0; i < 4; i++) {
+            if (gameBoard[x][i].equals(""))
+                return i;
+        }
+        return -1;
+    }
+
+    private int checkColumn(int y) {
+        for (int i = 0; i < 4; i++) {
+            if (gameBoard[i][y].equals(""))
+                return i;
+        }
+        return -1;
     }
 
     private void makeBoard() {
