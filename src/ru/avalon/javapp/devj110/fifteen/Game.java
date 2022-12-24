@@ -10,6 +10,8 @@ import java.util.Random;
 public class Game extends JFrame {
     private final String[][] win = {{"1", "2", "3", "4"}, {"5", "6", "7", "8"},
             {"9", "10", "11", "12"}, {"13", "14", "15", ""}};
+    private final String[][] win2 = {{"1", "2", "3", "4"}, {"5", "6", "7", "8"},
+            {"9", "10", "11", "12"}, {"13", "15", "14", ""}};
     private String[][] gameBoard;
 
     JPanel brd;
@@ -47,12 +49,34 @@ public class Game extends JFrame {
         checkWin();
     }
 
+    private Boolean compareBoard(String[][] reference, String[][] board) {
+        if (reference.length != board.length)
+            return false;
+        Boolean flag = true;
+        for (int i = 0; i < reference.length; i++) {
+            for (int j = 0; j < reference.length; j++) {
+                if (!reference[i][j].equals(board[i][j]))
+                    flag = false;
+            }
+        }
+        return flag;
+    }
+
+    private void winMessage() {
+        int result = JOptionPane.showConfirmDialog(this,"Победа!!!\nНачать новую игру?",
+                "Победа",
+                JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            remove(brd);
+            mixed();
+            makeBoard();
+            brd.updateUI();
+        }
+    }
+
     private void checkWin() {
-        if (Arrays.equals(win, gameBoard))
-            gameBoard[3][3] = "w";
-        remove(brd);
-        makeBoard();
-        brd.updateUI();
+        if (compareBoard(win, gameBoard) || compareBoard(win2, gameBoard))
+            winMessage();
     }
 
     private void moveToLine(int x, int line, int y) {
@@ -159,15 +183,3 @@ public class Game extends JFrame {
         new Game().setVisible(true);
     }
 }
-/*
-Напишите программу, реализующую игру «15»
-Интерфейс приложения должен:
-• показывать текущее расположение костяшек;
-• позволять пользователю перемещать костяшки в свободную ячейку;
-• в случае выигрыша показывать пользователю соответствующее сообщение;
-• позволять пользователю сбрасывать расположение костяшек, расставляя их случайным
-образом; сброс должен выполняться после дополнительного подтверждения.
-Особенность игры «15» состоит в том, что не все возможные начальные положения костяшек
-приводимы к выигрышу, когда костяшки расставлены по рядам в порядке от «1» до «15», а правая нижняя ячейка свободна. Исходя из этого допустим варианты реализации игры, при котором
-выигрышем считается расстановка, когда костяшки от «1» до «13» стоят на своих местах, костяшки «14» и «15» идут в любом порядке, а правая нижняя ячейка игрового поля свободна.
-*/
